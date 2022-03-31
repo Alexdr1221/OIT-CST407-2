@@ -22,26 +22,56 @@ def playback(file):
 def waveform(file):
     rec = wave.open(file, "rb")
 
-    signal = rec.readframes(-1)
-    signal = np.frombuffer(signal, dtype="int16")
+    if rec.getnchannels() == 2:
+        signal = rec.readframes(-1)
+        signal = np.frombuffer(signal, dtype="int16")
+        left_channel = signal[0::2]
+        right_channel = signal[1::2]
 
-    f_rate = rec.getframerate()
+        f_rate = rec.getframerate()
 
-    time = np.linspace(0,
-                       len(signal) / f_rate,
-                       num = len(signal))
+        left_time = np.linspace(0,
+                        len(left_channel) / f_rate,
+                        num = len(left_channel))
+        right_time = np.linspace(0,
+                        len(right_channel) / f_rate,
+                        num = len(right_channel))
 
-    plt.figure(1)
-    plt.title("Sound Wave")
-    plt.ylabel("Amplitude(dB)")
-    plt.xlabel("Time(s)")
-    plt.plot(time, signal)
-    plt.show()
+        plt.figure(1)
+        plt.title("Left Channel")
+        plt.ylabel("Amplitude(dB)")
+        plt.xlabel("Time(s)")
+        plt.plot(left_time, left_channel)
+        plt.grid(b=True)
+
+        plt.figure(2)
+        plt.title("Right Channel")
+        plt.ylabel("Amplitude(dB)")
+        plt.xlabel("Time(s)")
+        plt.plot(right_time, right_channel)
+        plt.grid(b=True)
+        plt.show()
+
+    else:
+        signal = rec.readframes(-1)
+        signal = np.frombuffer(signal, dtype="int16")
+
+        f_rate = rec.getframerate()
+
+        time = np.linspace(0,
+                        len(signal) / f_rate,
+                        num = len(signal))
+
+        plt.figure(1)
+        plt.title("Sound Wave")
+        plt.ylabel("Amplitude(dB)")
+        plt.xlabel("Time(s)")
+        plt.plot(time, signal)
+        plt.show()
 
 
 ######################################################################################
 
-file = "testRecord.wav"
-
-waveform(file)
+file = "timeShifted.wav"
 # playback(file)
+waveform(file)
