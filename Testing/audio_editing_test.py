@@ -5,6 +5,8 @@ import wave
 import array
 from pydub import AudioSegment
 
+# Converts a mono wav file to a stereo wave file with
+# both channels having the same audio
 def MonoToStereo(input, output):
     ifile = wave.open(input)
     print (ifile.getparams())
@@ -41,7 +43,10 @@ def AddDelay_mono(input, output, delay):
     # Export the modified file
     rec.export(output, format="wav")
 
+# Combines two mono files together and adds padding
+# to assure both are the proper length
 def MonoToStereo_delayed(channel1, channel2, output):
+    # Open files
     left_file = wave.open(channel1)
     right_file = wave.open(channel2)
     print (left_file.getparams())
