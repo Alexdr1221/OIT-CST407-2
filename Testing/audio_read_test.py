@@ -89,6 +89,6 @@ def waveform(file):
 
 ######################################################################################
 
-file = "testRecord.wav"
-# playback(file)
-waveform(file)
+# file = "testRecord.wav"
+# # playback(file)
+# waveform(file)
