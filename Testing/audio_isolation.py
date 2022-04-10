@@ -24,7 +24,7 @@ def dump_audio(file):
     print("Dumping Complete")
     dump.close()
 
-def trim_audio(file, threshold):
+def trim_audio(file, start_threshold, end_threshold):
     # Settings
     channels = 1
     sample_rate = 44100
@@ -38,8 +38,12 @@ def trim_audio(file, threshold):
     signal = rec.readframes(-1)
     signal = np.frombuffer(signal, dtype="int16")
 
-    firstval = np.argmax(signal > threshold)
-    trimmed = signal[firstval:]
+    # Locate the first and last index where the signal value is above the desired threshold
+    firstval = min(idx for idx, val in enumerate(signal) if val > end_threshold)
+    secondval = max(idx for idx, val in enumerate(signal) if val > end_threshold)
+
+    # Construct the trimmed array
+    trimmed = signal[firstval:secondval]
 
     # Save the audio as a .wav file
     trimmed = np.int16(trimmed/np.max(np.abs(trimmed)) * 32767)
@@ -50,5 +54,5 @@ def trim_audio(file, threshold):
 file = "testRecord.wav"
 trimmed = "trimmedRecord.wav"
 
-trim_audio(file, 2000)
+trim_audio(file, 1000, 2000)
 audio_read_test.waveform(trimmed)
