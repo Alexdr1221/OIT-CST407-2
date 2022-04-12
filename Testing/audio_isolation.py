@@ -95,9 +95,10 @@ def trim_audio(file, start_threshold, end_threshold):
 
 ###########################################################
 
-file = "timeShifted.wav"
-trimmed = "trimmedRecord.wav"
+if __name__ == '__main__':
+    file = "timeShifted.wav"
+    trimmed = "trimmedRecord.wav"
 
-trim_audio(file, 1000, 2000)
-audio_read_test.waveform(trimmed)
-dump_audio(trimmed)
+    trim_audio(file, 1000, 2000)
+    audio_read_test.waveform(trimmed)
+    dump_audio(trimmed)

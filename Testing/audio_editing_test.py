@@ -80,6 +80,7 @@ def MonoToStereo_delayed(channel1, channel2, output):
 
 ############################################################################################
 
-# MonoToStereo("testRecord.wav", "stereoRecord.wav")
-AddDelay_mono("testRecord.wav", "delayedRecord.wav", 100)
-MonoToStereo_delayed("testRecord.wav", "delayedRecord.wav", "timeShifted.wav")
+if __name__ == '__main__':
+    # MonoToStereo("testRecord.wav", "stereoRecord.wav")
+    AddDelay_mono("testRecord.wav", "delayedRecord.wav", 100)
+    MonoToStereo_delayed("test  Record.wav", "delayedRecord.wav", "timeShifted.wav")
