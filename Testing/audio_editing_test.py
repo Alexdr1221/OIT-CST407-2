@@ -4,6 +4,8 @@ import pyaudio
 import wave
 import array
 from pydub import AudioSegment
+import audio_read_test as ar
+import audio_isolation as iso
 
 # Converts a mono wav file to a stereo wave file with
 # both channels having the same audio
@@ -78,9 +80,42 @@ def MonoToStereo_delayed(channel1, channel2, output):
     ofile.writeframes(stereo.tobytes())
     ofile.close()
 
+# Currently only supports mono files
+def addNoise(file):
+    rec = wave.open(file, "rb")
+    (nchannels, sampwidth, framerate, nframes, comptype, compname) = rec.getparams()
+
+    # Read the signal data and convert it to an integer array
+    signal = rec.readframes(-1)
+    signal = np.frombuffer(signal, dtype="int16")
+    noise = np.random.normal(0, 50, signal.shape)
+    print(signal)
+    print('+')
+    print(noise.astype(int))
+
+    newSignal = np.add(signal, noise.astype(int))
+    print('Original Size: %d, New Size: %d' %(signal.size, newSignal.size))
+
+    # signal = np.add(signal, noise);
+    rec.close()
+
+    # Create the stereo file, set the proper parameters, and write the data
+    ofile = wave.open('noiseAdded.wav', 'wb')
+    print(nchannels, sampwidth, framerate, nframes, comptype, compname)
+    ofile.setparams((nchannels, sampwidth, framerate, nframes, comptype, compname))
+    ofile.writeframes(newSignal.tobytes())
+    ofile.close()
+
 ############################################################################################
 
 if __name__ == '__main__':
+    file = 'testRecord.wav'
+    edit = 'noiseAdded.wav'
     # MonoToStereo("testRecord.wav", "stereoRecord.wav")
-    AddDelay_mono("testRecord.wav", "delayedRecord.wav", 100)
-    MonoToStereo_delayed("test  Record.wav", "delayedRecord.wav", "timeShifted.wav")
+    # AddDelay_mono("testRecord.wav", "delayedRecord.wav", 100)
+    # MonoToStereo_delayed("test  Record.wav", "delayedRecord.wav", "timeShifted.wav")
+    # ar.waveform(file)
+    addNoise(file)
+    # ar.waveform(edit)
+    # iso.dump_audio(file)
+    # iso.dump_audio(edit)
