@@ -84,20 +84,15 @@ def MonoToStereo_delayed(channel1, channel2, output):
 def addNoise(file):
     rec = wave.open(file, "rb")
     (nchannels, sampwidth, framerate, nframes, comptype, compname) = rec.getparams()
+    print(nchannels, sampwidth, framerate, nframes, comptype, compname)
 
     # Read the signal data and convert it to an integer array
     signal = rec.readframes(-1)
-    signal = np.frombuffer(signal, dtype="int16")
-    noise = np.random.normal(0, 50, signal.shape)
-    print(signal)
-    print('+')
-    print(noise.astype(int))
+    signal = np.frombuffer(signal, dtype='int16')
 
-    newSignal = np.add(signal, noise.astype(int))
-    print('Original Size: %d, New Size: %d' %(signal.size, newSignal.size))
-
-    # signal = np.add(signal, noise);
-    rec.close()
+    # Generate a noise array and add it to the original signal
+    noise = np.random.normal(0, 100, signal.shape).astype(dtype='int16')
+    newSignal = np.add(signal, noise)
 
     # Create the stereo file, set the proper parameters, and write the data
     ofile = wave.open('noiseAdded.wav', 'wb')
