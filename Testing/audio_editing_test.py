@@ -82,9 +82,9 @@ def MonoToStereo_delayed(channel1, channel2, output):
 
 # Currently only supports mono files
 def addNoise(file):
+    # Open the file and get the audio parameters
     rec = wave.open(file, "rb")
     (nchannels, sampwidth, framerate, nframes, comptype, compname) = rec.getparams()
-    print(nchannels, sampwidth, framerate, nframes, comptype, compname)
 
     # Read the signal data and convert it to an integer array
     signal = rec.readframes(-1)
@@ -96,10 +96,35 @@ def addNoise(file):
 
     # Create the stereo file, set the proper parameters, and write the data
     ofile = wave.open('noiseAdded.wav', 'wb')
-    print(nchannels, sampwidth, framerate, nframes, comptype, compname)
     ofile.setparams((nchannels, sampwidth, framerate, nframes, comptype, compname))
     ofile.writeframes(newSignal.tobytes())
     ofile.close()
+
+def smooth_audio(file, window):
+    # Open the file and get the audio parameters
+    rec = wave.open(file, "rb")
+    (nchannels, sampwidth, framerate, nframes, comptype, compname) = rec.getparams()
+
+    # Read the signal data and convert it to an integer array
+    signal = rec.readframes(-1)
+    signal = np.frombuffer(signal, dtype='int16')
+
+    if window % 2 == 0:
+        window += 1
+    smoothed = np.array([0] * (signal.size))
+    window_array = np.array(signal[0 : window])
+
+    for i in signal[:]:
+        window_array = np.roll(window_array, -1)
+        window_array[window-1] = signal[i + window-1]
+        smoothed[i] = np.mean(window_array)
+
+    # Create the stereo file, set the proper parameters, and write the data
+    ofile = wave.open('smoothed.wav', 'wb')
+    ofile.setparams((nchannels, sampwidth, framerate, nframes, comptype, compname))
+    ofile.writeframes(smoothed.tobytes())
+    ofile.close()
+
 
 ############################################################################################
 
@@ -113,4 +138,7 @@ if __name__ == '__main__':
     addNoise(file)
     # ar.waveform(edit)
     # iso.dump_audio(file)
+    # iso.dump_audio(edit)
+    smooth_audio(edit, 7)
+    # ar.waveform(edit)
     # iso.dump_audio(edit)
