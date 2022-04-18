@@ -6,6 +6,8 @@ import array
 from pydub import AudioSegment
 import audio_read_test as ar
 import audio_isolation as iso
+import sys
+from scipy import signal as sig
 
 # Converts a mono wav file to a stereo wave file with
 # both channels having the same audio
@@ -81,7 +83,7 @@ def MonoToStereo_delayed(channel1, channel2, output):
     ofile.close()
 
 # Currently only supports mono files
-def addNoise(file):
+def addNoise(file, deviation):
     # Open the file and get the audio parameters
     rec = wave.open(file, "rb")
     (nchannels, sampwidth, framerate, nframes, comptype, compname) = rec.getparams()
@@ -91,7 +93,7 @@ def addNoise(file):
     signal = np.frombuffer(signal, dtype='int16')
 
     # Generate a noise array and add it to the original signal
-    noise = np.random.normal(0, 100, signal.shape).astype(dtype='int16')
+    noise = np.random.normal(0, deviation, signal.shape).astype(dtype='int16')
     newSignal = np.add(signal, noise)
 
     # Create the stereo file, set the proper parameters, and write the data
@@ -109,15 +111,19 @@ def smooth_audio(file, window):
     signal = rec.readframes(-1)
     signal = np.frombuffer(signal, dtype='int16')
 
+    # Make sure that the window size is odd
     if window % 2 == 0:
         window += 1
-    smoothed = np.array([0] * (signal.size))
-    window_array = np.array(signal[0 : window])
 
-    for i in signal[:]:
-        window_array = np.roll(window_array, -1)
-        window_array[window-1] = signal[i + window-1]
-        smoothed[i] = np.mean(window_array)
+    # Create the output array and window_array
+    smoothed = np.array([0] * (signal.size), dtype='int16')
+    winArray = np.array(signal[0 : window])
+
+    # Begin the smoothing process
+    for i in range(signal.size - window - 1):
+        winArray = np.roll(winArray, -1)
+        winArray[window-1] = signal[i + window-1]
+        smoothed[i] = np.mean(winArray)
 
     # Create the stereo file, set the proper parameters, and write the data
     ofile = wave.open('smoothed.wav', 'wb')
@@ -131,14 +137,19 @@ def smooth_audio(file, window):
 if __name__ == '__main__':
     file = 'testRecord.wav'
     edit = 'noiseAdded.wav'
+    trim = 'trimmedRecord.wav'
+    smoothed = 'smoothed.wav'
     # MonoToStereo("testRecord.wav", "stereoRecord.wav")
     # AddDelay_mono("testRecord.wav", "delayedRecord.wav", 100)
     # MonoToStereo_delayed("test  Record.wav", "delayedRecord.wav", "timeShifted.wav")
     # ar.waveform(file)
-    addNoise(file)
+    addNoise(file, 100)
+    # iso.trim_audio(edit, 1000, 1000)
     # ar.waveform(edit)
     # iso.dump_audio(file)
     # iso.dump_audio(edit)
     smooth_audio(edit, 7)
-    # ar.waveform(edit)
-    # iso.dump_audio(edit)
+    ar.waveform(edit)
+    ar.waveform(smoothed)
+    # iso.dump_audio(trim, 'trimDump.txt')
+    # iso.dump_audio('smoothed.wav', 'smoothDump.txt')

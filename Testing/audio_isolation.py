@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import sys
 from scipy.io.wavfile import write
 
-def dump_audio(file):
+def dump_audio(in_file, out_file):
     # Open the input and output files
-    rec = wave.open(file, "rb")
-    dump = open("audio_dump.txt", "w")
+    rec = wave.open(in_file, "rb")
+    dump = open(out_file, "w")
 
     # Read the signal data and convert it to an integer array
     signal = rec.readframes(-1)
