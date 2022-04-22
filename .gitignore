@@ -131,3 +131,5 @@ dmypy.json
 # Additions
 *.wav
 *.txt
+*.png
+Testing/MNIST
