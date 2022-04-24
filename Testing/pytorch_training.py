@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # Initialize the network and set parameters
     network = Network()
     learn_rate = optim.Adam(network.parameters(), lr=0.001) # Mess with lr to get best results
-    epochs = 10  # Number of training cycles for the network
+    epochs = 3  # Number of training cycles for the network
 
     # Train the network
     print('Training network...')

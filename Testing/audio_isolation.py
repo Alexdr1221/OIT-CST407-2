@@ -83,7 +83,7 @@ def trim_audio(file, start_threshold, end_threshold):
         signal = np.frombuffer(signal, dtype="int16")
 
         # Locate the first and last index where the signal value is above the desired threshold
-        firstval = min(idx for idx, val in enumerate(signal) if val > end_threshold)
+        firstval = min(idx for idx, val in enumerate(signal) if val > start_threshold)
         secondval = max(idx for idx, val in enumerate(signal) if val > end_threshold)
 
         # Construct the trimmed array
@@ -96,9 +96,10 @@ def trim_audio(file, start_threshold, end_threshold):
 ###########################################################
 
 if __name__ == '__main__':
-    file = "timeShifted.wav"
+    file = "testRecord.wav"
     trimmed = "trimmedRecord.wav"
 
-    trim_audio(file, 1000, 2000)
-    audio_read_test.waveform(trimmed)
-    dump_audio(trimmed)
+    # audio_read_test.waveform(file)
+    trim_audio(file, 6000, 1000)
+    # audio_read_test.waveform(trimmed)
+    dump_audio(trimmed, 'dump.txt')
