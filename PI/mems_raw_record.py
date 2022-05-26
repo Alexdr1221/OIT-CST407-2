@@ -5,10 +5,10 @@ import numpy as np
 # Settings
 CHUNK          = 44100  # frames to keep in buffer between reads
 samp_rate      = 44100 # sample rate [Hz]
-pyaudio_format = pyaudio.paInt16 # 16-bit device
-buffer_format  = np.int16 # 16-bit for buffer
-chans          = 2 # only read 1 channel
-dev_index      = 1 # index of sound device
+pyaudio_format = pyaudio.paInt24 # 16-bit device
+buffer_format  = np.int24 # 16-bit for buffer
+chans          = 1 # only read 1 channel
+dev_index      = 0 # index of sound device
 
 # Init Audio Object+
 audio = pyaudio.PyAudio() # create pyaudio instantiation
